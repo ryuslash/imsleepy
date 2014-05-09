@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IMSleepy</string>
+    <string name="i_awoke">Ik ben wakker geworden!</string>
+    <string name="main_menu_toggle_sleepy">Ik ga slapen</string>
+    <string name="main_menu_toggle_wakey">Ik ben opgestaan</string>
+</resources>

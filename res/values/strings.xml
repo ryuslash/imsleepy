@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IMSleepy</string>
+    <string name="i_awoke">I woke up!</string>
+    <string name="main_menu_toggle_sleepy">I\'m going to sleep</string>
+    <string name="main_menu_toggle_wakey">I got up</string>
+</resources>
