@@ -60,6 +60,24 @@ public class InterruptionDataSource
         return interruption;
     }
 
+    public Interruption latestInterruption(long sleep_session_id)
+    {
+        String[] whereArgs = {"" + sleep_session_id};
+        Cursor cursor = database.query(
+            SleepySQLiteHelper.TABLE_INTERRUPTION, allColumns,
+            "sleep_session_id = ?", whereArgs, null, null,
+            "time desc", "1"
+        );
+        Interruption interruption = null;
+
+        if (cursor.moveToFirst())
+            interruption = cursorToInterruption(cursor);
+
+        cursor.close();
+
+        return interruption;
+    }
+
     private Interruption cursorToInterruption(Cursor cursor)
     {
         Interruption interruption = new Interruption();

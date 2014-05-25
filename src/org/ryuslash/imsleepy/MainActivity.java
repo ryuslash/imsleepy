@@ -1,11 +1,14 @@
 package org.ryuslash.imsleepy;
 
+import java.util.Date;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
@@ -13,6 +16,7 @@ public class MainActivity extends Activity
     private SleepSessionDataSource session_datasource;
     private InterruptionDataSource interruption_datasource;
     private SleepSession current_session;
+    private SecondStepCounter seconds;
 
     /** Called when the activity is first created. */
     @Override
@@ -28,6 +32,16 @@ public class MainActivity extends Activity
 
         interruption_datasource = new InterruptionDataSource(this);
         interruption_datasource.open();
+
+        TextView view = (TextView)findViewById(R.id.timespan_view);
+        seconds = new SecondStepCounter(view);
+
+        if (current_session != null)
+            startCounting(
+                interruption_datasource.latestInterruption(
+                    current_session.getId()
+                )
+            );
     }
 
     @Override
@@ -52,6 +66,7 @@ public class MainActivity extends Activity
             isSleeping = !isSleeping;
             updateUISleeping(item);
             createSleepSession();
+            countSeconds();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -63,6 +78,7 @@ public class MainActivity extends Activity
     {
         session_datasource.close();
         interruption_datasource.close();
+        seconds.stop();
         super.onPause();
     }
 
@@ -71,6 +87,7 @@ public class MainActivity extends Activity
     {
         session_datasource.open();
         interruption_datasource.open();
+        if (isSleeping) seconds.start();
         super.onResume();
     }
 
@@ -102,8 +119,40 @@ public class MainActivity extends Activity
 
     }
 
+    private void countSeconds()
+    {
+        if (isSleeping) {
+            Interruption from =
+                interruption_datasource.latestInterruption(
+                    current_session.getId()
+                );
+            Date start = from != null ? from.getTime()
+                : current_session.getStart();
+            seconds.setStartValue(start.getTime());
+            seconds.start();
+        }
+        else
+            seconds.stop();
+    }
+
+    private void startCounting(Interruption from)
+    {
+        Date start = from != null ? from.getTime()
+            : current_session.getStart();
+
+        seconds.stop();
+        seconds.setStartValue(start.getTime());
+        seconds.start();
+    }
+
     public void registerInterruption(View view)
     {
-        interruption_datasource.createInterruption(current_session.getId());
+        if (current_session != null) {
+            Interruption interruption =
+                interruption_datasource.createInterruption(
+                    current_session.getId()
+                );
+            startCounting(interruption);
+        }
     }
 }
