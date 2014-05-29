@@ -12,19 +12,12 @@ public class SecondStepCounter
 
     private Runnable updateTime = new Runnable() {
             public void run() {
-                long millis = System.currentTimeMillis() - startTime;
-                int seconds = (int)(millis / 1000);
-                int minutes = seconds / 60;
-                int hours = minutes / 60;
-                minutes = minutes % 60;
-                seconds = seconds % 60;
+                Timespan timespan =
+                    Timespan.diff(startTime, System.currentTimeMillis());
                 Resources res = display.getResources();
-                String message = String.format(
-                    res.getString(R.string.last_wakeup),
-                    hours, minutes, seconds
-                );
 
-                display.setText(message);
+                timespan.setFormat(res.getString(R.string.last_wakeup));
+                display.setText(timespan.toString());
                 tickHandler.postDelayed(this, 200);
             }
         };
