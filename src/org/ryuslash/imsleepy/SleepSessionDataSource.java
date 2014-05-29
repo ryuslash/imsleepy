@@ -96,6 +96,23 @@ public class SleepSessionDataSource
         return session;
     }
 
+    public SleepSession getLatest()
+    {
+        Cursor cursor = database.query(
+            SleepySQLiteHelper.TABLE_SLEEP_SESSION, allColumns,
+            SleepySQLiteHelper.COLUMN_END + " IS NOT NULL", null, null,
+            null, SleepySQLiteHelper.COLUMN_END + " desc", "1"
+        );
+        SleepSession session = null;
+
+        if (cursor.moveToFirst())
+            session = cursorToSleepSession(cursor);
+
+        cursor.close();
+
+        return session;
+    }
+
     private SleepSession cursorToSleepSession(Cursor cursor)
     {
         SleepSession session = new SleepSession();
