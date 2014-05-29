@@ -1,0 +1,8 @@
+This commit may produce strange results for a day or two because a bug
+fixed in a previous commit caused the times to be formatted incorrectly,
+this caused the hours to be from 1-24 instead of 0-23, so after 23:59
+would come 24:00 the next day, which would be sorted after 23:59 the
+next day.
+
+This behaviour will disappear in a day or two, once none of these dates
+will appear again.
