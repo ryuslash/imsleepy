@@ -38,7 +38,7 @@ public class SleepySQLiteHelper extends SQLiteOpenHelper
         + ");";
 
     private SimpleDateFormat date_formatter =
-        new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZZZZZ", Locale.US);
+        new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.US);
 
     public SimpleDateFormat getDateFormatter()
     {
