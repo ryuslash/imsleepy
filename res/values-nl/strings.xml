@@ -5,4 +5,5 @@
     <string name="main_menu_toggle_sleepy">Ik ga slapen</string>
     <string name="main_menu_toggle_wakey">Ik ben opgestaan</string>
     <string name="last_wakeup" formatted="false">"Al %02d:%02d:%02d uur niet wakker geworden."</string>
+    <string name="sleep_length" formatted="false">"Je laatste slaap sessie duurde %02d:%02d:%02d uur."</string>
 </resources>

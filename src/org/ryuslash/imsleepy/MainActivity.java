@@ -3,6 +3,7 @@ package org.ryuslash.imsleepy;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,7 @@ public class MainActivity extends Activity
     private SleepSessionDataSource session_datasource;
     private InterruptionDataSource interruption_datasource;
     private SleepSession current_session;
+    private SleepSession last_session;
     private SecondStepCounter seconds;
 
     /** Called when the activity is first created. */
@@ -42,6 +44,20 @@ public class MainActivity extends Activity
                     current_session.getId()
                 )
             );
+
+        last_session = session_datasource.getLatest();
+        if (last_session != null) setSleepLengthText();
+    }
+
+    private void setSleepLengthText()
+    {
+        TextView view = (TextView)findViewById(R.id.sleeplength);
+        Timespan span = Timespan.diff(last_session.getStart(),
+                                      last_session.getEnd());
+        Resources res = view.getResources();
+
+        span.setFormat(res.getString(R.string.sleep_length));
+        view.setText(span.toString());
     }
 
     @Override
@@ -97,7 +113,9 @@ public class MainActivity extends Activity
             current_session = session_datasource.startSleepSession();
         else {
             session_datasource.stopSleepSession(current_session);
+            last_session = current_session;
             current_session = null;
+            setSleepLengthText();
         }
     }
 

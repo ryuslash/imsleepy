@@ -14,6 +14,11 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:gravity="center_horizontal" />
+  <TextView
+      android:id="@+id/sleeplength"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal" />
   <Button
       android:id="@+id/interrupt_button"
       android:layout_width="fill_parent"
