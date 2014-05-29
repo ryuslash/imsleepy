@@ -65,15 +65,17 @@ public class SleepSessionDataSource
     {
         ContentValues values = new ContentValues();
         String[] whereArgs = { "" + session.getId() };
-        String endDate = dbHelper.getDateFormatter().format(new Date());
+        Date endDate = new Date();
+        String endStr = dbHelper.getDateFormatter().format(endDate);
 
-        values.put(SleepySQLiteHelper.COLUMN_END, endDate);
+        values.put(SleepySQLiteHelper.COLUMN_END, endStr);
         Log.w(SleepSessionDataSource.class.getName(),
-              "Stopping session at: " + endDate);
+              "Stopping session at: " + endStr);
 
         database.update(SleepySQLiteHelper.TABLE_SLEEP_SESSION, values,
                         SleepySQLiteHelper.COLUMN_ID + " = ?",
                         whereArgs);
+        session.setEnd(endDate);
     }
 
     public SleepSession getCurrent()
