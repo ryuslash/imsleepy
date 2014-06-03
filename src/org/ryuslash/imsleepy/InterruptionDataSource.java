@@ -60,7 +60,7 @@ public class InterruptionDataSource
         return interruption;
     }
 
-    public Interruption latestInterruption(long sleep_session_id)
+    public Interruption getLatest(long sleep_session_id)
     {
         String[] whereArgs = {"" + sleep_session_id};
         Cursor cursor = database.query(

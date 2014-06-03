@@ -40,7 +40,7 @@ public class MainActivity extends Activity
 
         if (current_session != null)
             startCounting(
-                interruption_datasource.latestInterruption(
+                interruption_datasource.getLatest(
                     current_session.getId()
                 )
             );
@@ -141,7 +141,7 @@ public class MainActivity extends Activity
     {
         if (isSleeping) {
             Interruption from =
-                interruption_datasource.latestInterruption(
+                interruption_datasource.getLatest(
                     current_session.getId()
                 );
             Date start = from != null ? from.getTime()
