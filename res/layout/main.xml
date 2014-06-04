@@ -8,17 +8,19 @@
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
       android:gravity="center_horizontal"
-      android:textSize="30sp" />
+      android:textSize="30sp"
+      android:paddingBottom="10sp" />
   <TextView
       android:id="@+id/timespan_view"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:gravity="center_horizontal" />
+      android:gravity="left" />
   <TextView
       android:id="@+id/sleeplength"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:gravity="center_horizontal" />
+      android:gravity="left"
+      android:paddingBottom="10sp" />
   <Button
       android:id="@+id/interrupt_button"
       android:layout_width="fill_parent"
