@@ -16,9 +16,12 @@ public class MainActivity extends Activity
     private boolean isSleeping = false;
     private SleepSessionDataSource session_datasource;
     private InterruptionDataSource interruption_datasource;
+
     private SleepSession current_session;
     private SleepSession last_session;
-    private SecondStepCounter seconds;
+
+    private Interruption latest_interruption;
+    private Interruption previous_interruption;
 
     /** Called when the activity is first created. */
     @Override
@@ -35,18 +38,38 @@ public class MainActivity extends Activity
         interruption_datasource = new InterruptionDataSource(this);
         interruption_datasource.open();
 
-        TextView view = (TextView)findViewById(R.id.timespan_view);
-        seconds = new SecondStepCounter(view);
-
-        if (current_session != null)
-            startCounting(
-                interruption_datasource.getLatest(
-                    current_session.getId()
-                )
-            );
-
         last_session = session_datasource.getLatest();
         if (last_session != null) setSleepLengthText();
+
+        if (current_session != null){
+            latest_interruption =
+                interruption_datasource.getLatest(current_session.getId());
+            previous_interruption =
+                interruption_datasource.getPrevious(current_session.getId());
+            if (latest_interruption != null) setTimeSinceWake();
+        }
+    }
+
+    private void setTimeSinceWake()
+    {
+        TextView view = (TextView)findViewById(R.id.timespan_view);
+
+        if (previous_interruption == null
+            && latest_interruption == null) {
+
+            view.setText("");
+            return;
+        }
+
+        Date start = previous_interruption != null
+            ? previous_interruption.getTime()
+            : current_session.getStart();
+        Timespan span =
+            Timespan.diff(start, latest_interruption.getTime());
+        Resources res = view.getResources();
+
+        span.setFormat(res.getString(R.string.last_wakeup));
+        view.setText(span.toString());
     }
 
     private void setSleepLengthText()
@@ -82,7 +105,6 @@ public class MainActivity extends Activity
             isSleeping = !isSleeping;
             updateUISleeping(item);
             createSleepSession();
-            countSeconds();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -94,7 +116,6 @@ public class MainActivity extends Activity
     {
         session_datasource.close();
         interruption_datasource.close();
-        seconds.stop();
         super.onPause();
     }
 
@@ -103,18 +124,23 @@ public class MainActivity extends Activity
     {
         session_datasource.open();
         interruption_datasource.open();
-        if (isSleeping) seconds.start();
         super.onResume();
     }
 
     private void createSleepSession()
     {
-        if (isSleeping)
+        if (isSleeping) {
             current_session = session_datasource.startSleepSession();
+            latest_interruption = null;
+            previous_interruption = null;
+            setTimeSinceWake();
+        }
         else {
             session_datasource.stopSleepSession(current_session);
             last_session = current_session;
             current_session = null;
+            latest_interruption = null;
+            previous_interruption = null;
             setSleepLengthText();
         }
     }
@@ -137,40 +163,15 @@ public class MainActivity extends Activity
 
     }
 
-    private void countSeconds()
-    {
-        if (isSleeping) {
-            Interruption from =
-                interruption_datasource.getLatest(
-                    current_session.getId()
-                );
-            Date start = from != null ? from.getTime()
-                : current_session.getStart();
-            seconds.setStartValue(start.getTime());
-            seconds.start();
-        }
-        else
-            seconds.stop();
-    }
-
-    private void startCounting(Interruption from)
-    {
-        Date start = from != null ? from.getTime()
-            : current_session.getStart();
-
-        seconds.stop();
-        seconds.setStartValue(start.getTime());
-        seconds.start();
-    }
-
     public void registerInterruption(View view)
     {
         if (current_session != null) {
-            Interruption interruption =
+            previous_interruption = latest_interruption;
+            latest_interruption =
                 interruption_datasource.createInterruption(
                     current_session.getId()
                 );
-            startCounting(interruption);
+            setTimeSinceWake();
         }
     }
 }
